@@ -9,7 +9,13 @@ defmodule ProjectMeetings.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ProjectMeetings",
+      homepage_url: "https://github.com/blakedgordon/ProjectMeetings-backend",
+      docs: [main: "ProjectMeetings", # The main page in the docs
+            extras: ["README.md"]]
     ]
   end
 
@@ -47,4 +53,5 @@ defmodule ProjectMeetings.Mixfile do
       {:joken, "~> 1.1"},
     ]
   end
+
 end
