@@ -37,7 +37,14 @@ defmodule ProjectMeetings.Mixfile do
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+
+      {:ecto, "~> 2.0"},
+      {:json_web_token, "~> 0.2"},
+      {:httpoison, "~> 0.13"},
+      {:earmark, "~> 0.1", only: :dev},
+      {:ex_doc, "~> 0.11", only: :dev},
+      {:joken, "~> 1.1"},
     ]
   end
 end
