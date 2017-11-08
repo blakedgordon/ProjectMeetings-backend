@@ -267,6 +267,25 @@ defmodule ProjectMeetings.User do
     end
   end
 
+  # Given an aud list, checks if User data is valid
+  defp valid_data?(%{"aud" => aud} = data, aud_list, valid_iss) when is_list(aud_list) do
+    if aud in aud_list do
+      current_time = DateTime.utc_now |> DateTime.to_unix
+
+      {:ok, data}
+      |> validate_exp(current_time)
+      |> validate_iat(current_time)
+      |> validate_iss(valid_iss)
+      |> validate_sub
+      |> case do
+        {:ok, _data} -> true
+        {:error, _errors} -> false
+      end
+    else
+      false
+    end
+  end
+
   # Checks if User data is valid
   defp valid_data?(data, valid_aud, valid_iss) do
     current_time = DateTime.utc_now |> DateTime.to_unix

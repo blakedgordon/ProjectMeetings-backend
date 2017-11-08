@@ -23,7 +23,9 @@ defmodule ProjectMeetingsWeb.Plugs.UserAuth do
       conn |> assign(:user, user)
     else
       _error ->
-        conn |> send_resp(401, "Unauthorized AF, my dude")
+        conn
+        |> send_resp(401, "Unauthorized AF, my dude")
+        |> halt
     end
   end
 end
