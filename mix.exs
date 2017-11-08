@@ -5,7 +5,7 @@ defmodule ProjectMeetings.Mixfile do
     [
       app: :project_meetings,
       version: "0.0.1",
-      elixir: "~> 1.4",
+      elixir: "~> 1.5.2",
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
@@ -51,6 +51,7 @@ defmodule ProjectMeetings.Mixfile do
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:joken, "~> 1.1"},
+      {:distillery, "~> 1.5"}
     ]
   end
 
