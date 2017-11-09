@@ -23,7 +23,16 @@ defmodule ProjectMeetingsWeb.UserController do
           |> json(%{message: "An unknown error occured", data: changeset.changes})
       end
     else
-      conn |> send_resp(400,  "Invalid data supplied")
+      errors = Enum.reduce changeset.errors, %{}, fn err, err_map ->
+        name = Kernel.elem(err, 0)
+        msg = Kernel.elem(err, 1) |> Kernel.elem(0)
+
+        Map.put(err_map, name, msg)
+      end
+
+      conn
+      |> put_status(400)
+      |> json(%{message: "Invalid data supplied", errors: errors})
     end
   end
 
