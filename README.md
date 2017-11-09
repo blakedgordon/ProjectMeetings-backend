@@ -23,11 +23,11 @@ API Domain: http://ec2-34-227-172-66.compute-1.amazonaws.com:8080
 API Endpoints:
 
 - `/api/users`
-  - POST `/create`
+  - POST `/`
   - GET `/email/:email`
   - GET `/uid/:u_id`
   - DELETE `/invites/:m_id`
- 
+
 - `/api/meetings`
   - POST `/`
   - GET `/:m_id`
@@ -37,7 +37,7 @@ API Endpoints:
   - DELETE `/:m_id/invites`
 
 ### /api/users
-#### POST /create
+#### POST /
 Will create a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google.
 
 Example body:
@@ -186,5 +186,3 @@ Example body:
 	"emails": ["heyguys.letscallhimTwoNamesinsteadofhisactualname@yahoo.com", "soundsgood.lol@aol.com"]
 }
 ```
-
-

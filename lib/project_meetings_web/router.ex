@@ -24,19 +24,17 @@ defmodule ProjectMeetingsWeb.Router do
     get "/", PageController, :index
   end
 
-  scope "/api/users/create", ProjectMeetingsWeb do
+  scope "/api/users", ProjectMeetingsWeb do
     pipe_through :api
 
     post "/", UserController, :create # Create a user
-  end
 
-  scope "/api/users", ProjectMeetingsWeb do
     pipe_through :api_auth
 
     get "/email/:email", UserController, :show_by_email # Get one user by email
     get "/uid/:u_id", UserController, :show_by_u_id # Get one user by u_id
 
-    delete "/invites", UserController, :delete_invite # Reject an invite
+    delete "/invites/:m_id", UserController, :delete_invite # Reject an invite
   end
 
   scope "/api/meetings", ProjectMeetingsWeb do

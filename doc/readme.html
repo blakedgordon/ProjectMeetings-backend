@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.12.0">
-    <title>README – ProjectMeetings v0.0.1</title>
+    <title>ProjectMeetings – ProjectMeetings v0.0.3</title>
     <link rel="stylesheet" href="dist/app-88251e7c81.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -25,7 +25,7 @@
         ProjectMeetings
       </h1>
       <h2 class="sidebar-projectVersion">
-        v0.0.1
+        v0.0.3
       </h2>
     </div>
     
@@ -58,6 +58,8 @@
 
 
 <h1>ProjectMeetings</h1>
+<p>Too often, meetings go on for too long and accomplish far too little. There are usually a few people who do all the talking while everyone else is either unable to speak, distracted, or uninterested. Although there are many “meeting” apps on the marketplace (such as WebEx or GoToMeeting), none of them truly solve this problem. These apps are more concerned with facilitating meetings which couldn’t exist otherwise than actually laying a foundation for engaging and productive meetings. Because of this, we’re creating an app that reworks the common meeting by laying a foundation for structure within a meeting and giving everyone the ability to contribute in an essential way; we believe this will improve engagement and productivity across the board, helping meetings accomplish more in a fraction of the time.</p>
+<h2 id="elixir-phoenix-documentation"> Elixir / Phoenix Documentation</h2><p>Elixir website: <a href="https://elixir-lang.org/">https://elixir-lang.org/</a></p>
 <p>To start your Phoenix server:</p>
 <ul>
 <li>Install dependencies with <code class="inline">mix deps.get</code>
@@ -68,20 +70,233 @@
 </li>
 </ul>
 <p>Now you can visit <a href="http://localhost:4000"><code class="inline">localhost:4000</code></a> from your browser.</p>
-<p>Ready to run in production? Please <a href="http://www.phoenixframework.org/docs/deployment">check our deployment guides</a>.</p>
-<h2>Learn more</h2>
+<p>You can learn more at: <a href="http://www.phoenixframework.org/">http://www.phoenixframework.org/</a></p>
+<h2 id="api-documentation"> API Documentation</h2><p>API Domain: <a href="http://ec2-34-227-172-66.compute-1.amazonaws.com:8080">http://ec2-34-227-172-66.compute-1.amazonaws.com:8080</a></p>
+<p>API Endpoints:</p>
 <ul>
-<li>Official website: <a href="http://www.phoenixframework.org/">http://www.phoenixframework.org/</a>
+<li><code class="inline">/api/users</code>
 </li>
-<li>Guides: <a href="http://phoenixframework.org/docs/overview">http://phoenixframework.org/docs/overview</a>
+<li>POST <code class="inline">/</code>
 </li>
-<li>Docs: <a href="https://hexdocs.pm/phoenix">https://hexdocs.pm/phoenix</a>
+<li>GET <code class="inline">/email/:email</code>
 </li>
-<li>Mailing list: <a href="http://groups.google.com/group/phoenix-talk">http://groups.google.com/group/phoenix-talk</a>
+<li>GET <code class="inline">/uid/:u_id</code>
 </li>
-<li>Source: <a href="https://github.com/phoenixframework/phoenix">https://github.com/phoenixframework/phoenix</a>
+<li><p>DELETE <code class="inline">/invites/:m_id</code></p>
+</li>
+<li><code class="inline">/api/meetings</code>
+</li>
+<li>POST <code class="inline">/</code>
+</li>
+<li>GET <code class="inline">/:m_id</code>
+</li>
+<li>PUT <code class="inline">/:m_id</code>
+</li>
+<li>DELETE <code class="inline">/:m_id</code>
+</li>
+<li>POST <code class="inline">/:m_id/invites</code>
+</li>
+<li>DELETE <code class="inline">/:m_id/invites</code>
 </li>
 </ul>
+<h3>/api/users</h3>
+<h4>POST /</h4>
+<p>Will create a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google.</p>
+<p>Example body:</p>
+<pre><code class="elixir">{
+    &quot;u_id&quot;: &quot;0oK25sUxbtaIb0ul9w5NazmeLqi1&quot;,
+    &quot;display_name&quot;: &quot;Two Names&quot;,
+    &quot;email&quot;: &quot;twonames@gmail.com&quot;,
+    &quot;google_token&quot;: &quot;eyJhbGciOiJSUzI1NiIsImtpZCI6ImNiMTFlMmYyMzNhZWUwMzI5YTUzNDQ1NzAzNDljZGRiNmI4ZmYyNTIifQ.eyJhenAiOiI3MTE3NDI3MDQ1ODEtbGxlcmQ2NnZoM3U0MHBlYm40OWFrNGdnZ2Q3aGJvMDUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MTE3NDI3MDQ1ODEtZzlzNTZnaWJjYXEyNjU4MjVnOGFoNXE0NWQ2YnVxMWwuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQ5MjA4ODY4MTYyNDAwMjEyOTEiLCJlbWFpbCI6ImNhbGViLnNvbG9yaW9AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUwOTg1NjEyNSwiZXhwIjoxNTA5ODU5NzI1LCJuYW1lIjoiQ2FsZWIgU29sb3JpbyIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLWQyNjhqLUJnaTZJL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FOUTBrZjdFdmM4QkV3U2k0dWtqVW5wd1VXWEg1bkYyaVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IkNhbGViIiwiZmFtaWx5X25hbWUiOiJTb2xvcmlvIiwibG9jYWxlIjoiZW4ifQ.FecOT2hEr15qWJZ9snWwyxboiFgBb6xD2yfvdHeAnH-ZA_ZmegAKCzN1r1kfBxzk-EpIuyQW3Z6Mouz_tNku60_PMWBj51JYcyRh2w6PsBojvxeriibUlz7HvRIiP-jqssPrw3v2gpBqlmPoza-sfeQeSzBQ_OOAAbSJqVylrxxVRG_ikWz8AsdGF-ht61sjcEktLnOpKZ-7nM-vJ6nqGLQCkam2nWcaNCFNVfXRGQ6dScQre3iuGKJmXypjnnS8g8QVjMpdmDIaFWLM_3GnrvjRkftOfW7qYnpNr8RsZIx5LK5nD_zK052iq0v61yZ5zj5emM_KIN-0nxHNK85JBg&quot;,
+    &quot;firebase_token&quot;: &quot;eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdjNDZhM2RkNzA4ZDhkNjNjN2E0ODMxZjg3MzFlM2QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vcHJvamVjdG1lZXRpbmctMTgzNzA2IiwibmFtZSI6IkNhbGViIFNvbG9yaW8iLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDUuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy1kMjY4ai1CZ2k2SS9BQUFBQUFBQUFBSS9BQUFBQUFBQUFBQS9BTlEwa2Y3RXZjOEJFd1NpNHVralVucHdVV1hINW5GMmlRL3M5Ni1jL3Bob3RvLmpwZyIsImF1ZCI6InByb2plY3RtZWV0aW5nLTE4MzcwNiIsImF1dGhfdGltZSI6MTUwOTg1Nzg5OCwidXNlcl9pZCI6IjBvSzI1c1V4YnRhSWIwdWw5dzVOYXptZUxxaTEiLCJzdWIiOiIwb0syNXNVeGJ0YUliMHVsOXc1TmF6bWVMcWkxIiwiaWF0IjoxNTA5ODU3ODk5LCJleHAiOjE1MDk4NjE0OTksImVtYWlsIjoiY2FsZWIuc29sb3Jpb0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjExNDkyMDg4NjgxNjI0MDAyMTI5MSJdLCJlbWFpbCI6WyJjYWxlYi5zb2xvcmlvQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.eSrriX8ccU9vrFePR6PRil3HGX69xD6SWX6PHhqi-BnONUaKHG8uCUW7OypqGaRXB8DK-VisbQ-PgAWxKuVY9bdQs02mLPfz0JgBOfGK-UqrBjXNAHTApmCa1Lb2wodU8p6A5KrNXnCFRYtedoBW3tMBFiCxwE7YqbflVKnPH4AIUj4MTEUJa52SU0SXnJPmM2mpSF4Wc_6vkd00jww5jBFoT-YTKVD53koAlk60-SJTyJhcUdZgzNfBuaV3gwGkD_F0fX-si8ttPMgoUqs4Zk47UB1FSzXCI3kNvZ1ijG9sAaR5M1MFeY-gtwse-OwzVe9Sa8BmLzYJE9LQ9VIuLQ&quot;
+}</code></pre>
+<h4>GET /email/:email</h4>
+<p>Retrieves a user’s public-facing information by their email. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/email/twonames@gmail.com</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<h4>GET /uid/:u_id</h4>
+<p>Retrieves a user’s public-facing information by their Firebase-provided user id. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/uid/0oK25sUxbtaIb0ul9w5NazmeLqi1</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<h4>DELETE /invites/:m_id</h4>
+<p>Rejects an invite to a meeting sent to the user. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/invites/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<h3>/api/meetings</h3>
+<h4>POST /</h4>
+<p>Will create a meeting object in Firebase. Requires a name, objective statement, start time (UNIX time), time limit (in ms), and the drive folder id. Invites can also be included. Requires a valid token.</p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<p>Example body:</p>
+<pre><code class="elixir">{
+    &quot;name&quot;: &quot;Two Names Meeting&quot;,
+    &quot;objective&quot;: &quot;Establish that Two Names&#39; has an actual name...&quot;
+    &quot;time&quot;: 1609843492,
+    &quot;time_limit&quot;: 600000,
+    &quot;drive_folder_id&quot;: &quot;0B0SCJBL1Pu8eaWwxU1hnMFZrTVU&quot;,
+    &quot;invites&quot;: [&quot;heyguys.letscallhimTwoNamesinsteadofhisactualname@yahoo.com&quot;, &quot;soundsgood.lol@aol.com&quot;]
+}</code></pre>
+<h4>GET /:m_id</h4>
+<p>Retrieves a meetings facing information if the requestor is either the creator or member of the meeting. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/meetings/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<h4>PUT /:m_id</h4>
+<p>Retrieves a meetings information if the requestor is either the creator or member of the meeting. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/meetings/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<p>Example body:</p>
+<pre><code class="elixir">{
+    &quot;name&quot;: &quot;ANGRY Two Names Meeting&quot;,
+    &quot;objective&quot;: &quot;Establish that Two Names&#39; has an actual name....BY FORCE&quot;
+    &quot;time&quot;: 1609843492,
+    &quot;time_limit&quot;: 60000000,
+    &quot;drive_folder_id&quot;: &quot;0B0SCJBL1Pu8eaWwxU1hnMFZrTVU&quot;,
+}</code></pre>
+<h4>DELETE /:m_id</h4>
+<p>Deletes a meeting as well as its associated invites if the requestor is the creator of the meeting. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/meetings/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<h4>POST /:m_id/invites</h4>
+<p>Will create invite(s) to a meeting in Firebase through reference to users’ email. Emails must be registered with the app. The requestor must be the creator of the meeting. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/meetings/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<p>Example body:</p>
+<pre><code class="elixir">{
+    &quot;emails&quot;: [&quot;heyguys.letscallhimTwoNamesinsteadofhisactualname@yahoo.com&quot;, &quot;soundsgood.lol@aol.com&quot;, &quot;letscallhimbyhisrealname@gmail.com&quot;]
+}</code></pre>
+<h4>DELETE /:m_id/invites</h4>
+<p>Will delete invite(s) to a meeting in Firebase through reference to users’ email. The requestor must be the creator of the meeting. Requires a valid token.</p>
+<p>Example request: <code class="inline">/api/meetings/51b46c5c-29e8-4e8e-ac48-226d7fb1fdf3</code></p>
+<p>Example Header:</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left">Key</th><th style="text-align: left">Value</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: left">token</td><td style="text-align: left">eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj…</td>
+</tr>
+</table>
+<p>Example body:</p>
+<pre><code class="elixir">{
+    &quot;emails&quot;: [&quot;heyguys.letscallhimTwoNamesinsteadofhisactualname@yahoo.com&quot;, &quot;soundsgood.lol@aol.com&quot;]
+}</code></pre>
 
       <footer class="footer">
         <p>
