@@ -12,16 +12,32 @@ defmodule ProjectMeetingsWeb.UserController do
   Creates/updates a ProjectMeetings.User object in Firebase
   """
   def update(conn, params) do
-    changeset = with [token | _tail] <- conn |> get_req_header("token"),
-      {:ok, user} <- User.get_by_firebase_token(token)
-    do
-      User.changeset_update(%User{}, Map.merge(user, params) |> Map.delete("invites"))
-    else
-      _no_token -> User.changeset(%User{}, params |> Map.delete("invites"))
-    end
+    try do
+      changeset = with [token | _tail] <- conn |> get_req_header("token"),
+        {:ok, user} <- User.get_by_firebase_token(token)
+      do
+        tokens = if Map.has_key?(params, "firebase_token") do
+          [:firebase]
+        else
+          []
+        end
 
-    if changeset.valid? do
-      try do
+        tokens = if Map.has_key?(params, "google_token") do
+          tokens ++ [:google]
+        else
+          tokens
+        end
+
+        User.changeset_update(
+          %User{},
+          Map.merge(user, params) |> Map.delete("invites"),
+          tokens)
+      else
+        _no_token ->
+          User.changeset(%User{}, params |> Map.delete("invites"))
+      end
+
+      if changeset.valid? do
         case User.put(changeset.changes) do
           {:ok, user} -> json(conn, user)
           {:error, _status_code} ->
@@ -29,20 +45,21 @@ defmodule ProjectMeetingsWeb.UserController do
             |> put_status(500)
             |> json(%{message: "An unknown error occured", data: changeset.changes})
         end
-      rescue
-         e in RuntimeError -> conn |> send_resp(500, e.message)
-      end
-    else
-      errors = Enum.reduce changeset.errors, %{}, fn err, err_map ->
-        name = Kernel.elem(err, 0)
-        msg = Kernel.elem(err, 1) |> Kernel.elem(0)
+      else
+        errors = Enum.reduce changeset.errors, %{}, fn err, err_map ->
+          name = Kernel.elem(err, 0)
+          msg = Kernel.elem(err, 1) |> Kernel.elem(0)
 
-        Map.put(err_map, name, msg)
-      end
+          Map.put(err_map, name, msg)
+        end
 
-      conn
-      |> put_status(400)
-      |> json(%{message: "Invalid data supplied", errors: errors})
+        conn
+        |> put_status(400)
+        |> json(%{message: "Invalid data supplied", errors: errors})
+      end
+    rescue
+      e in RuntimeError -> conn |> send_resp(500, e.message)
+      _e in KeyError -> conn |> send_resp(500, "Without a token header, every field must be provided")
     end
   end
 
@@ -53,7 +70,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_email(params["email"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, ["googleToken", "firebaseToken"]))
+          json(conn, Map.drop(user, ["google_token", "firebase_token"]))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end
@@ -69,7 +86,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_u_id(params["u_id"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, ["googleToken", "firebaseToken"]))
+          json(conn, Map.drop(user, ["google_token", "firebase_token"]))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end

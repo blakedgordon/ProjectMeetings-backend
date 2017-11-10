@@ -47,13 +47,29 @@ defmodule ProjectMeetings.User do
   @doc """
   Validates the proposed attributes and updates a User changeset
   """
-  def changeset_update(%User{} = user, params) do
-    user
+  def changeset_update(%User{} = old_user, params, tokens) do
+    user = old_user
     |> cast(params, [:u_id, :display_name, :email, :google_token, :firebase_token, :meetings])
     |> validate_required([:u_id, :display_name, :email, :google_token, :firebase_token])
     |> validate_length(:display_name, min: 2, max: 64)
     |> validate_length(:email, min: 2, max: 64)
     |> validate_format(:email, ~r/@/)
+
+    firebase_user = get_by_u_id!(params["u_id"])
+
+    user = if :firebase in tokens and
+        params["firebase_token"] == firebase_user["firebase_token"] do
+      user |> validate_firebase_token(:firebase_token)
+    else
+      user
+    end
+
+    if :google in tokens and
+        params["google_token"] == firebase_user["google_token"] do
+      user |> validate_google_token(:google_token)
+    else
+      user
+    end
   end
 
   @doc """
