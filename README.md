@@ -1,5 +1,7 @@
 # ProjectMeetings
 
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/afabcdfcbed7b5b12eff)
+
 Too often, meetings go on for too long and accomplish far too little. There are usually a few people who do all the talking while everyone else is either unable to speak, distracted, or uninterested. Although there are many “meeting” apps on the marketplace (such as WebEx or GoToMeeting), none of them truly solve this problem. These apps are more concerned with facilitating meetings which couldn’t exist otherwise than actually laying a foundation for engaging and productive meetings. Because of this, we’re creating an app that reworks the common meeting by laying a foundation for structure within a meeting and giving everyone the ability to contribute in an essential way; we believe this will improve engagement and productivity across the board, helping meetings accomplish more in a fraction of the time.
 
 ## Elixir / Phoenix Documentation
@@ -18,12 +20,12 @@ You can learn more at: http://www.phoenixframework.org/
 
 ## API Documentation
 
-API Domain: http://ec2-34-227-172-66.compute-1.amazonaws.com:8080
+API Domain: http://ec2-34-226-155-228.compute-1.amazonaws.com:8080
 
 API Endpoints:
 
 - `/api/users`
-  - POST `/`
+  - PUT `/`
   - GET `/email/:email`
   - GET `/uid/:u_id`
   - DELETE `/invites/:m_id`
@@ -37,13 +39,12 @@ API Endpoints:
   - DELETE `/:m_id/invites`
 
 ### /api/users
-#### POST /
-Will create a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google.
+#### PUT /
+Will create/update a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google. If updating a user's information, you may choose to provide some, but not all, of the required information, assuming that you provide a valid token.
 
 Example body:
 ```
 {
-	"u_id": "0oK25sUxbtaIb0ul9w5NazmeLqi1",
 	"display_name": "Two Names",
 	"email": "twonames@gmail.com",
 	"google_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImNiMTFlMmYyMzNhZWUwMzI5YTUzNDQ1NzAzNDljZGRiNmI4ZmYyNTIifQ.eyJhenAiOiI3MTE3NDI3MDQ1ODEtbGxlcmQ2NnZoM3U0MHBlYm40OWFrNGdnZ2Q3aGJvMDUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MTE3NDI3MDQ1ODEtZzlzNTZnaWJjYXEyNjU4MjVnOGFoNXE0NWQ2YnVxMWwuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQ5MjA4ODY4MTYyNDAwMjEyOTEiLCJlbWFpbCI6ImNhbGViLnNvbG9yaW9AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUwOTg1NjEyNSwiZXhwIjoxNTA5ODU5NzI1LCJuYW1lIjoiQ2FsZWIgU29sb3JpbyIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLWQyNjhqLUJnaTZJL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FOUTBrZjdFdmM4QkV3U2k0dWtqVW5wd1VXWEg1bkYyaVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IkNhbGViIiwiZmFtaWx5X25hbWUiOiJTb2xvcmlvIiwibG9jYWxlIjoiZW4ifQ.FecOT2hEr15qWJZ9snWwyxboiFgBb6xD2yfvdHeAnH-ZA_ZmegAKCzN1r1kfBxzk-EpIuyQW3Z6Mouz_tNku60_PMWBj51JYcyRh2w6PsBojvxeriibUlz7HvRIiP-jqssPrw3v2gpBqlmPoza-sfeQeSzBQ_OOAAbSJqVylrxxVRG_ikWz8AsdGF-ht61sjcEktLnOpKZ-7nM-vJ6nqGLQCkam2nWcaNCFNVfXRGQ6dScQre3iuGKJmXypjnnS8g8QVjMpdmDIaFWLM_3GnrvjRkftOfW7qYnpNr8RsZIx5LK5nD_zK052iq0v61yZ5zj5emM_KIN-0nxHNK85JBg",
@@ -98,7 +99,7 @@ Example body:
 ```
 {
 	"name": "Two Names Meeting",
-	"objective": "Establish that Two Names' has an actual name..."
+	"objective": "Learn to call Two Names by his actual name..."
 	"time": 1609843492,
 	"time_limit": 600000,
 	"drive_folder_id": "0B0SCJBL1Pu8eaWwxU1hnMFZrTVU",
@@ -133,7 +134,7 @@ Example body:
 ```
 {
 	"name": "ANGRY Two Names Meeting",
-	"objective": "Establish that Two Names' has an actual name....BY FORCE"
+	"objective": "Learn to call Two Names by his actual name...THROUGH FORCE"
 	"time": 1609843492,
 	"time_limit": 60000000,
 	"drive_folder_id": "0B0SCJBL1Pu8eaWwxU1hnMFZrTVU",

@@ -27,7 +27,7 @@ defmodule ProjectMeetingsWeb.Router do
   scope "/api/users", ProjectMeetingsWeb do
     pipe_through :api
 
-    post "/", UserController, :create # Create a user
+    put "/", UserController, :update # Create/update a user
 
     pipe_through :api_auth
 
@@ -40,13 +40,13 @@ defmodule ProjectMeetingsWeb.Router do
   scope "/api/meetings", ProjectMeetingsWeb do
     pipe_through :api_auth
 
-    post "/", MeetingController, :update # Create a meeting
+    post "/", MeetingController, :create # Create a meeting
 
     get "/:m_id", MeetingController, :show # Get one meeting
     put "/:m_id", MeetingController, :update # Update a meeting
     delete "/:m_id", MeetingController, :delete # Delete a meeting
 
-    post "/:m_id/invites", MeetingController, :create_invite # Create an invite
-    delete "/:m_id/invites", MeetingController, :delete_invite # Retract an invite
+    post "/:m_id/invites", MeetingController, :create_invites # Create an invite
+    delete "/:m_id/invites", MeetingController, :delete_invites # Retract an invite
   end
 end

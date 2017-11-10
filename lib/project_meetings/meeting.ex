@@ -26,6 +26,12 @@ defmodule ProjectMeetings.Meeting do
   Validates the proposed attributes and returns a new Meeting changeset
   """
   def changeset(%Meeting{} = meeting, params) do
+    user = if Map.has_key?(params, "u_id") do
+      User.get_by_u_id!(params["u_id"])
+    else
+      nil
+    end
+
     meeting
     |> cast(params, [:m_id, :u_id, :name, :objective, :time, :time_limit, :drive_folder_id, :invites])
     |> validate_required([:m_id, :u_id, :name, :objective, :time, :time_limit, :drive_folder_id])
@@ -33,9 +39,9 @@ defmodule ProjectMeetings.Meeting do
     |> validate_length(:objective, max: 100)
     |> validate_number(:time, greater_than: DateTime.to_unix(DateTime.utc_now))
     |> validate_number(:time_limit, greater_than: 60000)
-    |> validate_u_id(:u_id)
-    |> validate_drive_folder_id(:u_id, :drive_folder_id)
-    |> validate_invites(:invites)
+    |> validate_creator(user, :u_id)
+    |> validate_drive_folder_id(user, :u_id, :drive_folder_id)
+    |> validate_invites(user, :invites)
   end
 
   @doc """
@@ -80,20 +86,22 @@ defmodule ProjectMeetings.Meeting do
       "drive_folder_id": meeting.drive_folder_id
     }
 
-    email = User.get_by_u_id(meeting.u_id)["email"]
+    email = User.get_by_u_id!(meeting.u_id)["email"]
     |> String.replace(".", "__DOT__")
 
-    User.add_meeting!(meeting.u_id, email, meeting)
+    User.create_meeting!(meeting.u_id, email, meeting)
 
     body = if Map.has_key?(meeting, :invites) do
-      Enum.each Map.keys(meeting.invites), fn email ->
-        user = meeting.invites[email]
-        User.add_invite!(user["u_id"], user["email"], meeting)
+      invites = Enum.reduce Map.keys(meeting.invites), %{}, fn email, inv_map ->
+        user = meeting.invites[email] |> Map.delete("invites")
+        User.create_invite!(user["u_id"], user["email"], meeting)
+
+        Map.put(inv_map, email, user)
       end
 
-      Map.put(body, "invites", meeting.invites) |> Poison.encode!
+      Map.put(body, "invites", invites)
     else
-      body |> Poison.encode!
+      body
     end
 
     case HTTPoison.patch!(url, body |> Poison.encode!) do
@@ -106,7 +114,7 @@ defmodule ProjectMeetings.Meeting do
   @doc """
   Given a valid meeting and email, delets a Meeting from Firebase
   """
-  def delete(meeting, email) do
+  def delete(meeting, user) do
     m_id = meeting["m_id"]
     url = "#{@firebase_url}/meetings/#{m_id}.json?auth=#{@firebase_auth}"
 
@@ -117,7 +125,7 @@ defmodule ProjectMeetings.Meeting do
       end
     end
 
-    User.delete_meeting!(meeting["u_id"], email, m_id)
+    User.delete_meeting!(meeting["u_id"], user["email"], m_id)
 
     case HTTPoison.delete!(url) do
       %HTTPoison.Response{:status_code => 200} -> {:ok, meeting}
@@ -129,13 +137,12 @@ defmodule ProjectMeetings.Meeting do
   @doc """
   Invite a specific user to a specified meeting
   """
-  def add_invite!(meeting, user) do
+  def create_invite!(meeting, user) do
     u_id = user["u_id"]
-    email = user["email"]
-
+    email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{meeting["m_id"]}/invites/#{email}.json?auth=#{@firebase_auth}"
 
-    User.add_invite!(u_id, email, meeting)
+    User.create_invite!(u_id, email, meeting)
     HTTPoison.patch!(url, Poison.encode!(user))
   end
 
@@ -145,8 +152,7 @@ defmodule ProjectMeetings.Meeting do
   def delete_invite!(meeting, user) do
     m_id = meeting["m_id"]
     u_id = user["u_id"]
-    email = user["email"]
-
+    email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{m_id}/invites/#{email}.json?auth=#{@firebase_auth}"
 
     User.delete_invite!(u_id, email, m_id)
@@ -154,45 +160,35 @@ defmodule ProjectMeetings.Meeting do
   end
 
   # Given a changeset and the u_id, validate the u_id
-  defp validate_u_id(changeset, :u_id) do
-    validate_change changeset, :u_id, fn _, u_id ->
-      try do
-        case User.get_by_u_id!(u_id) do
-          {:ok, _user} -> []
-          _error -> [{:u_id, "Invalid u_id"}]
-        end
-      rescue
-         e in RuntimeError -> [{:u_id, e.message}]
+  defp validate_creator(changeset, user, :u_id) do
+    if user != nil do
+      changeset
+    else
+      validate_change changeset, :u_id, fn _,_u_id ->
+        [{:u_id, "Invalid u_id"}]
       end
     end
   end
 
   # Given a changeset, u_id, and drive_folder_id, validate the drive_folder_id
-  defp validate_drive_folder_id(changeset, :u_id, :drive_folder_id) do
-    validate_change changeset, :drive_folder_id, fn _, drive_folder_id ->
-      try do
-        with {:ok, user} <- User.get_by_u_id!(changeset.changes.u_id),
-              true <- drive_folder_exists?(user, drive_folder_id)
-        do
-          []
-        else
-          _error -> [{:drive, "Invalid drive folder"}]
-        end
-      rescue
-         e in RuntimeError -> [{:u_id, e.message}]
+  defp validate_drive_folder_id(changeset, user, :u_id, :drive_folder_id) do
+    if user != nil
+        and drive_folder_exists?(user, changeset.changes.drive_folder_id) == true do
+      changeset
+    else
+      validate_change changeset, :drive_folder_id, fn _, _drive_folder_id ->
+        [{:drive_folder_id, "Invalid drive folder"}]
       end
     end
   end
 
   # Given a changeset and proposed invites, validate the invites
-  defp validate_invites(changeset, :invites) do
+  defp validate_invites(changeset, user, :invites) do
     invites = if Map.has_key?(changeset.changes, :invites) do
       changeset.changes.invites
     else
       nil
     end
-
-    user = User.get_by_u_id(changeset.changes.u_id)
 
     valid = if invites != nil and length(invites) > 0 and user != nil do
       if (Enum.member?(invites, user["email"])) do
@@ -220,7 +216,7 @@ defmodule ProjectMeetings.Meeting do
 
   # Given invited users, verify users exists
   defp validate_users([email | tail] = users) when length(users) > 1 do
-    with  {:ok, user} <- User.get_by_email!(email),
+    with  {:ok, user} <- User.get_by_email(email),
           {:ok, users} <- validate_users(tail)
     do
       {:ok, Map.put(users, "#{String.replace(email, ".", "__DOT__")}", user)}
@@ -230,10 +226,10 @@ defmodule ProjectMeetings.Meeting do
   end
 
   # Given invited user, verify user exists
-  defp validate_users([email]) do
-    case User.get_by_email!(email) do
+  defp validate_users([email] = _user) do
+    case User.get_by_email(email) do
         {:ok, user} ->
-          {:ok, %{"#{String.replace(email, ".", "__DOT__")}": user}}
+          {:ok, Map.put(%{}, "#{String.replace(email, ".", "__DOT__")}", user)}
         err -> err
     end
   end

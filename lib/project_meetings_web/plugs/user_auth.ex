@@ -17,14 +17,21 @@ defmodule ProjectMeetingsWeb.Plugs.UserAuth do
   Verifies the token and stores the associated user data in conn
   """
   def call(conn, _default) do
-    with [token | _tail] <- conn |> get_req_header("token"),
-      {:ok, user} <- User.get_by_firebase_token(token)
-    do
-      conn |> assign(:user, user)
-    else
-      _error ->
+    try do
+      with [token | _tail] <- conn |> get_req_header("token"),
+        {:ok, user} <- User.get_by_firebase_token(token)
+      do
+        conn |> assign(:user, user)
+      else
+        _error ->
+          conn
+          |> send_resp(401, "Unauthorized AF, my dude")
+          |> halt
+      end
+    rescue
+      e in RuntimeError ->
         conn
-        |> send_resp(401, "Unauthorized AF, my dude")
+        |> send_resp(403, e.message)
         |> halt
     end
   end

@@ -13,11 +13,15 @@ defmodule ProjectMeetingsWeb.MeetingController do
   Creates a new ProjectMeetings.Meeting object in Firebase
   """
   def create(conn, params) do
-    meeting = params
-    |> Map.put("u_id", conn.assigns.user["u_id"])
-    |> Map.put("m_id", UUID.generate)
+    try do
+      meeting = params
+      |> Map.put("u_id", conn.assigns.user["u_id"])
+      |> Map.put("m_id", UUID.generate)
 
-    handle_changeset_and_insert(conn, meeting)
+      handle_changeset_and_insert(conn, meeting)
+    rescue
+      e in RuntimeError -> conn |> send_resp(500, e.message)
+    end
   end
 
   @doc """
@@ -46,19 +50,28 @@ defmodule ProjectMeetingsWeb.MeetingController do
   Updates an existing ProjectMeetings.Meeting object in Firebase
   """
   def update(conn, params) do
-    user = conn.assigns.user
-    m_id = params["m_id"]
+    try do
+      user = conn.assigns.user
+      m_id = params["m_id"]
 
-    if (Map.has_key?(user, "invites") and Map.has_key?(user["invites"], m_id))
-        or (Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id)) do
-      meeting = params
-      |> Map.put("u_id", user["u_id"])
-      |> Map.put("m_id", m_id)
-      |> Map.delete("invites")
+      meeting = if (Map.has_key?(user, "invites") and Map.has_key?(user["invites"], m_id)) or
+          (Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id))  do
+        m = Meeting.get!(m_id)
+        invites = Map.keys(m["invites"])
+
+        Map.merge(Meeting.get!(m_id), params)
+        |> Map.merge(%{"invites" => invites})
+        |> Map.put("u_id", user["u_id"])
+        |> Map.put("m_id", m_id)
+      else
+        conn
+        |> send_resp(401, "Unauthorized")
+        |> halt
+      end
 
       handle_changeset_and_insert(conn, meeting)
-    else
-      conn |> send_resp(401, "Unauthorized")
+    rescue
+      e in RuntimeError -> conn |> send_resp(500, e.message)
     end
   end
 
@@ -84,16 +97,16 @@ defmodule ProjectMeetingsWeb.MeetingController do
   end
 
   @doc """
-  Invites another user to the sepcified ProjectMeetings.Meeting entity.
+  Invites specific users to the sepcified ProjectMeetings.Meeting entity.
   """
-  def create_invite(conn, params) do
+  def create_invites(conn, params) do
     user = conn.assigns.user
     m_id = params["m_id"]
 
     if Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id) do
       try do
         Enum.each params["emails"], fn email ->
-          Meeting.add_invite!(Meeting.get!(m_id), User.get_by_email!(email))
+          Meeting.create_invite!(Meeting.get!(m_id), User.get_by_email!(email))
         end
 
         conn
@@ -108,9 +121,9 @@ defmodule ProjectMeetingsWeb.MeetingController do
   end
 
   @doc """
-  Removes an existing invite from the sepcified ProjectMeetings.Meeting entity
+  Removes specific existing invites from the sepcified ProjectMeetings.Meeting entity
   """
-  def delete_invite(conn, params) do
+  def delete_invites(conn, params) do
     user = conn.assigns.user
     m_id = params["m_id"]
 
