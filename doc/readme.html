@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.12.0">
-    <title>ProjectMeetings – ProjectMeetings v0.0.3</title>
+    <title>README – ProjectMeetings v0.0.3</title>
     <link rel="stylesheet" href="dist/app-88251e7c81.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -58,8 +58,10 @@
 
 
 <h1>ProjectMeetings</h1>
+<p><a href="https://app.getpostman.com/run-collection/afabcdfcbed7b5b12eff"><img src="https://run.pstmn.io/button.svg" alt="Run in Postman"/></a></p>
 <p>Too often, meetings go on for too long and accomplish far too little. There are usually a few people who do all the talking while everyone else is either unable to speak, distracted, or uninterested. Although there are many “meeting” apps on the marketplace (such as WebEx or GoToMeeting), none of them truly solve this problem. These apps are more concerned with facilitating meetings which couldn’t exist otherwise than actually laying a foundation for engaging and productive meetings. Because of this, we’re creating an app that reworks the common meeting by laying a foundation for structure within a meeting and giving everyone the ability to contribute in an essential way; we believe this will improve engagement and productivity across the board, helping meetings accomplish more in a fraction of the time.</p>
-<h2 id="elixir-phoenix-documentation"> Elixir / Phoenix Documentation</h2><p>Elixir website: <a href="https://elixir-lang.org/">https://elixir-lang.org/</a></p>
+<h2>Elixir / Phoenix Documentation</h2>
+<p>Elixir website: <a href="https://elixir-lang.org/">https://elixir-lang.org/</a></p>
 <p>To start your Phoenix server:</p>
 <ul>
 <li>Install dependencies with <code class="inline">mix deps.get</code>
@@ -71,12 +73,13 @@
 </ul>
 <p>Now you can visit <a href="http://localhost:4000"><code class="inline">localhost:4000</code></a> from your browser.</p>
 <p>You can learn more at: <a href="http://www.phoenixframework.org/">http://www.phoenixframework.org/</a></p>
-<h2 id="api-documentation"> API Documentation</h2><p>API Domain: <a href="http://ec2-34-227-172-66.compute-1.amazonaws.com:8080">http://ec2-34-227-172-66.compute-1.amazonaws.com:8080</a></p>
+<h2>API Documentation</h2>
+<p>API Domain: <a href="http://ec2-34-226-155-228.compute-1.amazonaws.com:8080">http://ec2-34-226-155-228.compute-1.amazonaws.com:8080</a></p>
 <p>API Endpoints:</p>
 <ul>
 <li><code class="inline">/api/users</code>
 </li>
-<li>POST <code class="inline">/</code>
+<li>PUT <code class="inline">/</code>
 </li>
 <li>GET <code class="inline">/email/:email</code>
 </li>
@@ -100,11 +103,10 @@
 </li>
 </ul>
 <h3>/api/users</h3>
-<h4>POST /</h4>
-<p>Will create a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google.</p>
+<h4>PUT /</h4>
+<p>Will create/update a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google. If updating a user’s information, you may choose to provide some, but not all, of the required information, assuming that you provide a valid token.</p>
 <p>Example body:</p>
 <pre><code class="elixir">{
-    &quot;u_id&quot;: &quot;0oK25sUxbtaIb0ul9w5NazmeLqi1&quot;,
     &quot;display_name&quot;: &quot;Two Names&quot;,
     &quot;email&quot;: &quot;twonames@gmail.com&quot;,
     &quot;google_token&quot;: &quot;eyJhbGciOiJSUzI1NiIsImtpZCI6ImNiMTFlMmYyMzNhZWUwMzI5YTUzNDQ1NzAzNDljZGRiNmI4ZmYyNTIifQ.eyJhenAiOiI3MTE3NDI3MDQ1ODEtbGxlcmQ2NnZoM3U0MHBlYm40OWFrNGdnZ2Q3aGJvMDUuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MTE3NDI3MDQ1ODEtZzlzNTZnaWJjYXEyNjU4MjVnOGFoNXE0NWQ2YnVxMWwuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQ5MjA4ODY4MTYyNDAwMjEyOTEiLCJlbWFpbCI6ImNhbGViLnNvbG9yaW9AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUwOTg1NjEyNSwiZXhwIjoxNTA5ODU5NzI1LCJuYW1lIjoiQ2FsZWIgU29sb3JpbyIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLWQyNjhqLUJnaTZJL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FOUTBrZjdFdmM4QkV3U2k0dWtqVW5wd1VXWEg1bkYyaVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IkNhbGViIiwiZmFtaWx5X25hbWUiOiJTb2xvcmlvIiwibG9jYWxlIjoiZW4ifQ.FecOT2hEr15qWJZ9snWwyxboiFgBb6xD2yfvdHeAnH-ZA_ZmegAKCzN1r1kfBxzk-EpIuyQW3Z6Mouz_tNku60_PMWBj51JYcyRh2w6PsBojvxeriibUlz7HvRIiP-jqssPrw3v2gpBqlmPoza-sfeQeSzBQ_OOAAbSJqVylrxxVRG_ikWz8AsdGF-ht61sjcEktLnOpKZ-7nM-vJ6nqGLQCkam2nWcaNCFNVfXRGQ6dScQre3iuGKJmXypjnnS8g8QVjMpdmDIaFWLM_3GnrvjRkftOfW7qYnpNr8RsZIx5LK5nD_zK052iq0v61yZ5zj5emM_KIN-0nxHNK85JBg&quot;,
@@ -185,7 +187,7 @@
 <p>Example body:</p>
 <pre><code class="elixir">{
     &quot;name&quot;: &quot;Two Names Meeting&quot;,
-    &quot;objective&quot;: &quot;Establish that Two Names&#39; has an actual name...&quot;
+    &quot;objective&quot;: &quot;Learn to call Two Names by his actual name...&quot;
     &quot;time&quot;: 1609843492,
     &quot;time_limit&quot;: 600000,
     &quot;drive_folder_id&quot;: &quot;0B0SCJBL1Pu8eaWwxU1hnMFZrTVU&quot;,
@@ -230,7 +232,7 @@
 <p>Example body:</p>
 <pre><code class="elixir">{
     &quot;name&quot;: &quot;ANGRY Two Names Meeting&quot;,
-    &quot;objective&quot;: &quot;Establish that Two Names&#39; has an actual name....BY FORCE&quot;
+    &quot;objective&quot;: &quot;Learn to call Two Names by his actual name...THROUGH FORCE&quot;
     &quot;time&quot;: 1609843492,
     &quot;time_limit&quot;: 60000000,
     &quot;drive_folder_id&quot;: &quot;0B0SCJBL1Pu8eaWwxU1hnMFZrTVU&quot;,

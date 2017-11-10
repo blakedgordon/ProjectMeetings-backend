@@ -88,15 +88,6 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#add_invite!/2">add_invite!(meeting, user)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Invite a specific user to a specified meeting</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="#changeset/2">changeset(meeting, params)</a>
   </div>
   
@@ -106,7 +97,16 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#delete/2">delete(meeting, email)</a>
+    <a href="#create_invite!/2">create_invite!(meeting, user)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Invite a specific user to a specified meeting</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete/2">delete(meeting, user)</a>
   </div>
   
     <div class="summary-synopsis"><p>Given a valid meeting and email, delets a Meeting from Firebase</p>
@@ -170,22 +170,7 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="add_invite!/2">
-  <div class="detail-header">
-    <a href="#add_invite!/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">add_invite!(meeting, user)</span>
-    
-    
-  </div>
-  
-  <section class="docstring">
-    <p>Invite a specific user to a specified meeting</p>
-
-  </section>
-</div>
-<div class="detail" id="changeset/2">
+          <div class="detail" id="changeset/2">
   <div class="detail-header">
     <a href="#changeset/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
@@ -200,12 +185,27 @@
 
   </section>
 </div>
+<div class="detail" id="create_invite!/2">
+  <div class="detail-header">
+    <a href="#create_invite!/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">create_invite!(meeting, user)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Invite a specific user to a specified meeting</p>
+
+  </section>
+</div>
 <div class="detail" id="delete/2">
   <div class="detail-header">
     <a href="#delete/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">delete(meeting, email)</span>
+    <span class="signature">delete(meeting, user)</span>
     
     
   </div>
