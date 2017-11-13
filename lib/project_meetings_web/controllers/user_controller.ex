@@ -33,8 +33,8 @@ defmodule ProjectMeetingsWeb.UserController do
           Map.merge(user, params) |> Map.delete("invites"),
           tokens)
       else
-        _no_token ->
-          User.changeset(%User{}, params |> Map.delete("invites"))
+        {:error, _reason} -> raise ArgumentError, message: "Token has expired and must be refreshed"
+        _no_token -> User.changeset(%User{}, params |> Map.delete("invites"))
       end
 
       if changeset.valid? do
@@ -59,7 +59,8 @@ defmodule ProjectMeetingsWeb.UserController do
       end
     rescue
       e in RuntimeError -> conn |> send_resp(500, e.message)
-      _e in KeyError -> conn |> send_resp(500, "Without a token header, every field must be provided")
+      e in ArgumentError -> conn |> send_resp(401, e.message)
+      _e in KeyError -> conn |> send_resp(403, "Without a token header, every field must be provided")
     end
   end
 
