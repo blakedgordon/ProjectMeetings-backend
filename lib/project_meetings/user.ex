@@ -130,13 +130,7 @@ defmodule ProjectMeetings.User do
   """
   def get_by_firebase_token(token) do
     case decode_firebase_jwt(token) do
-      {:ok, %{"sub" => u_id}} ->
-        user = get_by_u_id!(u_id)
-        if token == user["firebase_token"] do
-          {:ok, user}
-        else
-          {:error, "Expired token"}
-        end
+      {:ok, %{"sub" => u_id}} -> get_by_u_id(u_id)
       err -> err
     end
   end
