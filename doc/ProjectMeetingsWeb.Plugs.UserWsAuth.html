@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.12.0">
-    <title>ProjectMeetingsWeb.UserSocket – ProjectMeetings v0.0.3</title>
+    <title>ProjectMeetingsWeb.Plugs.UserWsAuth – ProjectMeetings v0.0.3</title>
     <link rel="stylesheet" href="dist/app-88251e7c81.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -59,11 +59,17 @@
 
       <h1>
         <small class="visible-xs">ProjectMeetings v0.0.3</small>
-        ProjectMeetingsWeb.UserSocket
+        ProjectMeetingsWeb.Plugs.UserWsAuth
         
         
       </h1>
 
+      
+        <section id="moduledoc" class="docstring">
+          <p>This user authentication plug helps with verifying tokens for websocket
+connections and gathering data about the token’s owner.</p>
+
+        </section>
       
 
       
@@ -83,14 +89,20 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#connect/2">connect(map, socket)</a>
+    <a href="#call/2">call(conn, default)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Verifies the token and stores the associated user data in conn</p>
+</div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#id/1">id(socket)</a>
+    <a href="#init/1">init(default)</a>
   </div>
+  
+    <div class="summary-synopsis"><p>Initializes plug</p>
+</div>
   
 </div>
 
@@ -114,32 +126,34 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="connect/2">
+          <div class="detail" id="call/2">
   <div class="detail-header">
-    <a href="#connect/2" class="detail-link" title="Link to this function">
+    <a href="#call/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">connect(map, socket)</span>
+    <span class="signature">call(conn, default)</span>
     
     
   </div>
   
   <section class="docstring">
-    
+    <p>Verifies the token and stores the associated user data in conn</p>
+
   </section>
 </div>
-<div class="detail" id="id/1">
+<div class="detail" id="init/1">
   <div class="detail-header">
-    <a href="#id/1" class="detail-link" title="Link to this function">
+    <a href="#init/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">id(socket)</span>
+    <span class="signature">init(default)</span>
     
     
   </div>
   
   <section class="docstring">
-    
+    <p>Initializes plug</p>
+
   </section>
 </div>
 

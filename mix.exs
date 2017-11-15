@@ -51,7 +51,10 @@ defmodule ProjectMeetings.Mixfile do
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:joken, "~> 1.1"},
-      {:distillery, "~> 1.5"}
+      {:distillery, "~> 1.5"},
+
+      {:pigeon, "~> 1.1.1"},
+      {:kadabra, "~> 0.3.4"}
     ]
   end
 

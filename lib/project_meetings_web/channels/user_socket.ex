@@ -1,8 +1,11 @@
 defmodule ProjectMeetingsWeb.UserSocket do
   use Phoenix.Socket
 
+  alias ProjectMeetings.User
+
   ## Channels
-  # channel "room:*", ProjectMeetingsWeb.RoomChannel
+  channel "user:*", ProjectMeetingsWeb.UserChannel
+  channel "meeting:*", ProjectMeetingsWeb.MeetingChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -19,8 +22,13 @@ defmodule ProjectMeetingsWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+  def connect(%{"token" => token}, socket) do
+    case User.get_by_firebase_token(token) do
+      {:ok, current_user} ->
+        {:ok, assign(socket, :current_user, current_user)}
+      {:error, _reason} ->
+        :error
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

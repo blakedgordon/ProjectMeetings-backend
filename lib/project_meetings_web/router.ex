@@ -9,17 +9,28 @@ defmodule ProjectMeetingsWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :browser_auth do
+    plug ProjectMeetingsWeb.Plugs.UserWsAuth
+    plug :put_user_token
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   pipeline :api_auth do
     plug :accepts, ["json"]
-    plug ProjectMeetingsWeb.Plugs.UserAuth
+    plug ProjectMeetingsWeb.Plugs.UserApiAuth
   end
 
   scope "/", ProjectMeetingsWeb do
     pipe_through :browser # Use the default browser stack
+    get "/", PageController, :index
+  end
+
+  scope "/socket", ProjectMeetingsWeb do
+    pipe_through :browser # Use the default browser stack
+    pipe_through :browser_auth
 
     get "/", PageController, :index
   end
@@ -48,5 +59,15 @@ defmodule ProjectMeetingsWeb.Router do
 
     post "/:m_id/invites", MeetingController, :create_invites # Create an invite
     delete "/:m_id/invites", MeetingController, :delete_invites # Retract an invite
+  end
+
+  defp put_user_token(conn, _) do
+    IO.puts "PUT"
+    if current_user = conn.assigns[:user] do
+      token = Phoenix.Token.sign(conn, "user socket", current_user)
+      assign(conn, :user_token, token)
+    else
+      conn
+    end
   end
 end

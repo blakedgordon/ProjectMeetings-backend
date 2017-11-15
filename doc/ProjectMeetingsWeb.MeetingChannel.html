@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.12.0">
-    <title>ProjectMeetingsWeb.UserSocket – ProjectMeetings v0.0.3</title>
+    <title>ProjectMeetingsWeb.MeetingChannel – ProjectMeetings v0.0.3</title>
     <link rel="stylesheet" href="dist/app-88251e7c81.css" />
     
     <script src="dist/sidebar_items.js"></script>
@@ -59,11 +59,17 @@
 
       <h1>
         <small class="visible-xs">ProjectMeetings v0.0.3</small>
-        ProjectMeetingsWeb.UserSocket
+        ProjectMeetingsWeb.MeetingChannel
         
         
       </h1>
 
+      
+        <section id="moduledoc" class="docstring">
+          <p>The user will connect to a room in this channel to get real-time updates
+about the specified meeting.</p>
+
+        </section>
       
 
       
@@ -83,13 +89,40 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#connect/2">connect(map, socket)</a>
+    <a href="#code_change/3">code_change(old, socket, extra)</a>
   </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#id/1">id(socket)</a>
+    <a href="#handle_in/3">handle_in(arg1, arg2, socket)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Posts a new applause to the meeting</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#handle_info/2">handle_info(message, state)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Untracks the meeting’s presence when it concludes</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#join/3">join(arg, params, socket)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Validates the user and joins the specified meeting channel</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#terminate/2">terminate(reason, socket)</a>
   </div>
   
 </div>
@@ -114,12 +147,12 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="connect/2">
+          <div class="detail" id="code_change/3">
   <div class="detail-header">
-    <a href="#connect/2" class="detail-link" title="Link to this function">
+    <a href="#code_change/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">connect(map, socket)</span>
+    <span class="signature">code_change(old, socket, extra)</span>
     
     
   </div>
@@ -128,12 +161,57 @@
     
   </section>
 </div>
-<div class="detail" id="id/1">
+<div class="detail" id="handle_in/3">
   <div class="detail-header">
-    <a href="#id/1" class="detail-link" title="Link to this function">
+    <a href="#handle_in/3" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">id(socket)</span>
+    <span class="signature">handle_in(arg1, arg2, socket)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Posts a new applause to the meeting.</p>
+
+  </section>
+</div>
+<div class="detail" id="handle_info/2">
+  <div class="detail-header">
+    <a href="#handle_info/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">handle_info(message, state)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Untracks the meeting’s presence when it concludes</p>
+
+  </section>
+</div>
+<div class="detail" id="join/3">
+  <div class="detail-header">
+    <a href="#join/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">join(arg, params, socket)</span>
+    
+    
+  </div>
+  
+  <section class="docstring">
+    <p>Validates the user and joins the specified meeting channel</p>
+
+  </section>
+</div>
+<div class="detail" id="terminate/2">
+  <div class="detail-header">
+    <a href="#terminate/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">terminate(reason, socket)</span>
     
     
   </div>

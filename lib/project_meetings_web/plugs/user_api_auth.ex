@@ -1,11 +1,14 @@
-defmodule ProjectMeetingsWeb.Plugs.UserAuth do
+defmodule ProjectMeetingsWeb.Plugs.UserApiAuth do
   require Logger
   import Plug.Conn
+
+  # use ProjectMeetingsWeb, :controller
 
   alias ProjectMeetings.User
 
   @moduledoc """
-  This user authentication plug helps with verifying tokens and gathering data about the token's owner.
+  This user authentication plug helps with verifying tokens for the REST API
+  and gathering data about the token's owner.
   """
 
   @doc """
@@ -24,7 +27,10 @@ defmodule ProjectMeetingsWeb.Plugs.UserAuth do
         conn |> assign(:user, user)
       else
         _error ->
+          IO.inspect ProjectMeetingsWeb.Presence.list("user:wKnVfBOGOWYUCBG9Bmon3ey8Kcn1")
+
           conn
+          |> put_status(401)
           |> send_resp(401, "Unauthorized AF, my dude")
           |> halt
       end
