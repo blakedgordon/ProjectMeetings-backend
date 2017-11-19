@@ -3,6 +3,10 @@ defmodule ProjectMeetings.Utils.FCM do
 
   @topics [:invite, :meeting]
 
+  @moduledoc """
+  This module assists with sending notifications through Firebase Cloud Messaging.
+  """
+
   def notify!(_topic, _emails, meeting) when
       is_map(meeting) == false or meeting == %{} do
     raise ArgumentError, message: "The third argument of notify!/3 must be a meeting"
@@ -21,6 +25,9 @@ defmodule ProjectMeetings.Utils.FCM do
     %HTTPoison.Response{:status_code => 200}
   end
 
+  @doc """
+    Notify users of a new invite.
+  """
   def notify!(:invite, emails, meeting) do
     registration_ids = Enum.map emails, fn(email) ->
       User.get_by_email!(email)["instance_id"]
@@ -50,6 +57,9 @@ defmodule ProjectMeetings.Utils.FCM do
     send_notification(message)
   end
 
+  @doc """
+  Notify users of a new meeting about to start.
+  """
   def notify!(:meeting, emails, meeting) do
     registration_ids = Enum.map emails, fn(email) ->
       User.get_by_email!(email)["instance_id"]
@@ -76,6 +86,7 @@ defmodule ProjectMeetings.Utils.FCM do
     send_notification(message)
   end
 
+  # Given a message, send a FCM notification.
   defp send_notification(message) do
     url = "https://fcm.googleapis.com/fcm/send"
 
