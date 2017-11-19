@@ -2,6 +2,7 @@ defmodule ProjectMeetings.Meeting do
   use Ecto.Schema
   import Ecto.Changeset
   alias ProjectMeetings.{Meeting, User}
+  alias ProjectMeetings.Utils.FCM
 
   @firebase_url Application.get_env(:project_meetings, ProjectMeetingsWeb.Endpoint)[:firebase_url]
   @firebase_auth Application.get_env(:project_meetings, ProjectMeetingsWeb.Endpoint)[:firebase_auth]
@@ -91,8 +92,10 @@ defmodule ProjectMeetings.Meeting do
 
     User.create_meeting!(meeting.u_id, email, meeting)
 
+    emails = Map.keys(meeting.invites)
+
     body = if Map.has_key?(meeting, :invites) do
-      invites = Enum.reduce Map.keys(meeting.invites), %{}, fn email, inv_map ->
+      invites = Enum.reduce emails, %{}, fn email, inv_map ->
         user = meeting.invites[email] |> Map.delete("invites")
         User.create_invite!(user["u_id"], user["email"], meeting)
 
@@ -104,8 +107,11 @@ defmodule ProjectMeetings.Meeting do
       body
     end
 
-    case HTTPoison.patch!(url, body |> Poison.encode!) do
-      %HTTPoison.Response{:status_code => 200} -> {:ok, meeting}
+    with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, body |> Poison.encode!),
+          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:invite, emails, meeting)
+    do
+      {:ok, meeting}
+    else
       %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
       _else -> {:error, 500}
     end

@@ -3,6 +3,7 @@ defmodule ProjectMeetingsWeb.MeetingController do
 
   alias Ecto.UUID
   alias ProjectMeetings.{Meeting, User}
+  alias ProjectMeetings.Utils.FCM
 
   @moduledoc """
   This controller assists with manipulating ProjectMeetings.Meeting objects in
@@ -108,6 +109,8 @@ defmodule ProjectMeetingsWeb.MeetingController do
         Enum.each params["emails"], fn email ->
           Meeting.create_invite!(Meeting.get!(m_id), User.get_by_email!(email))
         end
+
+        FCM.notify!(:invite, params["emails"], Meeting.get!(m_id))
 
         conn
         |> put_status(200)

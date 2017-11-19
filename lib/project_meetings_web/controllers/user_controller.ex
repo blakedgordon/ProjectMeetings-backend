@@ -3,6 +3,8 @@ defmodule ProjectMeetingsWeb.UserController do
 
   alias ProjectMeetings.{Meeting, User}
 
+  @hidden_values ["google_token", "firebase_token", "instance_id"]
+
   @moduledoc """
   This controller assists with manipulating ProjectMeetings.User objects in
   Firebase as well as the entities they influence.
@@ -71,7 +73,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_email(params["email"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, ["google_token", "firebase_token"]))
+          json(conn, Map.drop(user, @hidden_values))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end
@@ -87,7 +89,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_u_id(params["u_id"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, ["google_token", "firebase_token"]))
+          json(conn, Map.drop(user, @hidden_values))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end

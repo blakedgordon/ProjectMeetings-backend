@@ -24,8 +24,8 @@ defmodule ProjectMeetings.User do
     field :email, :string
     field :firebase_token, :string
     field :google_token, :string
+    field :instance_id, :string
     field :invites, {:array, :string}
-    field :meetings, {:array, :string}
     field :u_id, :string
   end
 
@@ -34,8 +34,8 @@ defmodule ProjectMeetings.User do
   """
   def changeset(%User{} = user, params) do
     user
-    |> cast(params, [:display_name, :email, :google_token, :firebase_token, :meetings, :invites])
-    |> validate_required([:display_name, :email, :google_token, :firebase_token])
+    |> cast(params, [:display_name, :email, :google_token, :firebase_token, :instance_id, :invites])
+    |> validate_required([:display_name, :email, :google_token, :firebase_token, :instance_id])
     |> validate_google_token(:google_token)
     |> validate_firebase_token(:firebase_token) # Will assign u_id
     |> validate_required([:u_id])
@@ -49,8 +49,8 @@ defmodule ProjectMeetings.User do
   """
   def changeset_update(%User{} = old_user, params, tokens) do
     user = old_user
-    |> cast(params, [:u_id, :display_name, :email, :google_token, :firebase_token, :meetings])
-    |> validate_required([:u_id, :display_name, :email, :google_token, :firebase_token])
+    |> cast(params, [:u_id, :display_name, :email, :google_token, :firebase_token, :instance_id])
+    |> validate_required([:u_id, :display_name, :email, :google_token, :firebase_token, :instance_id])
     |> validate_length(:display_name, min: 2, max: 64)
     |> validate_length(:email, min: 2, max: 64)
     |> validate_format(:email, ~r/@/)
@@ -148,14 +148,16 @@ defmodule ProjectMeetings.User do
       "display_name": user.display_name,
       "email": user.email,
       "google_token": user.google_token,
-      "firebase_token": user.firebase_token
+      "firebase_token": user.firebase_token,
+      "instance_id": user.instance_id
     }
 
     email_body = %{
       "display_name": user.display_name,
       "u_id": user.u_id,
       "google_token": user.google_token,
-      "firebase_token": user.firebase_token
+      "firebase_token": user.firebase_token,
+      "instance_id": user.instance_id
     }
 
     if Map.has_key?(user, "invites")  do

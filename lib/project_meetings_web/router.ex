@@ -62,7 +62,6 @@ defmodule ProjectMeetingsWeb.Router do
   end
 
   defp put_user_token(conn, _) do
-    IO.puts "PUT"
     if current_user = conn.assigns[:user] do
       token = Phoenix.Token.sign(conn, "user socket", current_user)
       assign(conn, :user_token, token)
