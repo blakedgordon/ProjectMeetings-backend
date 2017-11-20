@@ -206,26 +206,26 @@ WebSocket Endpoint: [ws://ec2-34-226-155-228.compute-1.amazonaws.com:8080/socket
 #### User Channel
 Connect to a certain room with in the user channel by specifying topic as `user:<U_ID>`
 
-Events sent to the room include:
-`phx_join`: Will authenticate the user before letting them into the room.
-
-Events sent by the room include:
-`presence_state`: Informs newly-joined users of other presences within the room.
-`presence_diff`: Informs users of when a change in presences within the room occurs.
+Events sent to the room include:  
+`phx_join`: Will authenticate the user before letting them into the room.  
+  
+Events sent by the room include:  
+`presence_state`: Informs newly-joined users of other presences within the room.  
+`presence_diff`: Informs users of when a change in presences within the room occurs.  
 
 #### Meeting Channel
 Connect to a certain room with in the meeting channel by specifying topic as `meeting:<M_ID>`
 
-Events sent to the room include:
-`phx_join`: Will authenticate the user before letting them into the room.
-
-Events sent by the room include:
-`presence_state`: Informs newly-joined users of other presences within the room.
-`presence_diff`: Informs users of when a change in presences within the room occurs.
-`meeting_start`: Informs users that the meeting has started (must be meeting creator to enact this).
-`msg`: Posts a new message in the meeting.
-`applause`: Sends new applause to the meeting.
-`file_share`: Alerts other users of a new file shared.
+Events sent to the room include:  
+`phx_join`: Will authenticate the user before letting them into the room.  
+  
+Events sent by the room include:  
+`presence_state`: Informs newly-joined users of other presences within the room.  
+`presence_diff`: Informs users of when a change in presences within the room occurs.  
+`meeting_start`: Informs users that the meeting has started (must be meeting creator to enact this).  
+`msg`: Posts a new message in the meeting.  
+`applause`: Sends new applause to the meeting.  
+`file_share`: Alerts other users of a new file shared.  
 
 ## Firebase Security Rules
 ```
