@@ -108,7 +108,7 @@ defmodule ProjectMeetings.Meeting do
     end
 
     with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, body |> Poison.encode!),
-          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:invite, emails, meeting)
+          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:meeting_invite, emails, meeting)
     do
       {:ok, meeting}
     else
@@ -150,6 +150,17 @@ defmodule ProjectMeetings.Meeting do
 
     User.create_invite!(u_id, email, meeting)
     HTTPoison.patch!(url, Poison.encode!(user))
+    FCM
+
+    with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
+          %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting),
+          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:meeting_invite, [email], meeting)
+    do
+      {:ok, meeting}
+    else
+      %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
+      _else -> {:error, 500}
+    end
   end
 
   @doc """

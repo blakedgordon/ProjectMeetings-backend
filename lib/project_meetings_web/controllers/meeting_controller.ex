@@ -110,7 +110,7 @@ defmodule ProjectMeetingsWeb.MeetingController do
           Meeting.create_invite!(Meeting.get!(m_id), User.get_by_email!(email))
         end
 
-        FCM.notify!(:invite, params["emails"], Meeting.get!(m_id))
+        FCM.notify!(:meting_invite, params["emails"], Meeting.get!(m_id))
 
         conn
         |> put_status(200)

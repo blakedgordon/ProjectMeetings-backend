@@ -1,7 +1,10 @@
 defmodule ProjectMeetingsWeb.MeetingChannel do
   use Phoenix.Channel
 
+  alias ProjectMeetings.{Meeting, Utils.FCM}
   alias ProjectMeetingsWeb.Presence
+
+  intercept ["presence_diff"]
 
   @moduledoc """
   The user will connect to a room in this channel to get real-time updates
@@ -41,6 +44,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
 
     if Map.has_key?(current_user, "meetings") and
         Map.has_key?(current_user["meetings"], m_id) do
+      FCM.notify!(:meeting_start, Meeting.get!(m_id))
       broadcast! socket, "start_meeting", %{}
     end
 
@@ -50,22 +54,51 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
   @doc """
   Posts a new message to the meeting.
   """
-  def handle_in("new_msg", %{"msg" => msg}, socket) do
+  def handle_in("msg", %{"msg" => msg}, socket) do
     current_user = socket.assigns[:current_user]
 
-    broadcast! socket, "new_msg", %{u_id: current_user["u_id"], msg: msg}
+    broadcast! socket, "msg", %{u_id: current_user["u_id"], msg: msg}
 
     {:noreply, socket}
   end
 
   @doc """
-  Posts a new applause to the meeting.
+  Sends new applause to the meeting.
   """
-  def handle_in("new_applause", _body, socket) do
+  def handle_in("applause", _body, socket) do
     current_user = socket.assigns[:current_user]
 
-    broadcast! socket, "new_applause", %{u_id: current_user["u_id"]}
+    broadcast! socket, "applause", %{u_id: current_user["u_id"]}
 
+    {:noreply, socket}
+  end
+
+  @doc """
+  Alerts other users of a new file shared.
+  """
+  def handle_in("file_share", %{"file_id" => file_id}, socket) do
+    current_user = socket.assigns[:current_user]
+
+    reply = %{
+      u_id: current_user["u_id"],
+      msg: "#{current_user["display_name"]} shared a file through Google Drive!",
+      file_id: file_id
+    }
+
+    broadcast! socket, "msg", reply
+
+    {:noreply, socket}
+  end
+
+  @doc """
+  Checks if anyone is still in the room. If not, untrack the meeting's presence.
+  """
+  def handle_out("presence_diff", _body, socket) do
+    m_id = socket.assigns[:m_id]
+
+    if length(Presence.list("meeting:#{m_id}")[m_id].metas) == 0 do
+      send self(), :after_end
+    end
     {:noreply, socket}
   end
 
@@ -90,7 +123,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
   def handle_info(:after_start, socket) do
     m_id = socket.assigns.m_id
     {:ok, _} = Presence.track(socket, m_id, %{
-      updated_at: inspect(System.system_time(:seconds))
+      started_at: inspect(System.system_time(:seconds))
     })
 
     push socket, "presence_state", Presence.list(socket)

@@ -3,6 +3,8 @@ defmodule ProjectMeetingsWeb.UserChannel do
 
   alias ProjectMeetingsWeb.Presence
 
+  intercept ["presence_diff"]
+
   @moduledoc """
   The user will connect to this channel to get realtime updates
   about invites and upcoming meetings.
@@ -27,34 +29,17 @@ defmodule ProjectMeetingsWeb.UserChannel do
   end
 
   @doc """
-  Checks if the user is online, then notifies them about an invitation accordingly
+  Checks if anyone is still in the room. If not, untrack the meeting's presence.
   """
-  def handle_out("invite_notify", %{"body" => body}, socket) do
-    u_id = body["u_id"]
+  def handle_out("presence_diff", _body, socket) do
+    u_id = socket.assigns[:u_id]
 
-    if length(Presence.list("user:#{u_id}")[u_id].metas) > 0 do
-      broadcast! socket, "invite_notify", %{body: body}
-    else
-      # TODO: Send push notification
+    if length(Presence.list("user:#{u_id}")[u_id].metas) == 0 do
+      send self(), :after_leave
     end
-
     {:noreply, socket}
   end
 
-  @doc """
-  Checks if the user is online, then notifies them about an upcoming meeting accordingly
-  """
-  def handle_out("meeting_notify", %{"body" => body}, socket) do
-    u_id = body["u_id"]
-
-    if length(Presence.list("user:#{u_id}")[u_id].metas) > 0 do
-      broadcast! socket, "meeting_notify", %{body: body}
-    else
-      # TODO: Send push notification
-    end
-
-    {:noreply, socket}
-  end
 
   @doc """
   Tracks the user's presence
@@ -65,6 +50,17 @@ defmodule ProjectMeetingsWeb.UserChannel do
       current_user: current_user,
       online_at: inspect(System.system_time(:seconds))
     })
+
+    push socket, "presence_state", Presence.list(socket)
+
+    {:noreply, socket}
+  end
+
+  @doc """
+  Untracks the meeting's presence when it concludes
+  """
+  def handle_info(:after_end, socket) do
+    {:ok, _} = Presence.untrack(socket, socket.assigns.u_id)
 
     push socket, "presence_state", Presence.list(socket)
 
