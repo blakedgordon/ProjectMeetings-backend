@@ -8,7 +8,11 @@ defmodule ProjectMeetingsWeb.UserSocket do
   channel "meeting:*", ProjectMeetingsWeb.MeetingChannel
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport :websocket, Phoenix.Transports.WebSocket,
+    timeout: :infinity,
+    check_origin: false,
+    check_origin: ["//localhost", "//ec2-34-226-155-228.compute-1.amazonaws.com"],
+    transport_log: false
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can

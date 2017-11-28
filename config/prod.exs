@@ -15,7 +15,8 @@ use Mix.Config
 # which you typically run after static files are built.
 config :project_meetings, ProjectMeetingsWeb.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "ec2-34-227-172-66.compute-1.amazonaws.com", port: {:system, "PORT"}],
+  url: [host: "ec2-34-226-155-228.compute-1.amazonaws.com", port: {:system, "PORT"}],
+  check_origin: ["//localhost", "//ec2-34-226-155-228.compute-1.amazonaws.com"],
   server: true,
   root: ".",
   version: Application.spec(:phoenix_distillery, :vsn),
