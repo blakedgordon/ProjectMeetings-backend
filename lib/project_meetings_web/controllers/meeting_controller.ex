@@ -21,7 +21,9 @@ defmodule ProjectMeetingsWeb.MeetingController do
 
       handle_changeset_and_insert(conn, meeting)
     rescue
-      e in RuntimeError -> conn |> send_resp(500, e.message)
+      e in RuntimeError ->
+        IO.puts "lol wut #{e.message}"
+        conn |> send_resp(500, e.message)
     end
   end
 
@@ -86,7 +88,9 @@ defmodule ProjectMeetingsWeb.MeetingController do
     if Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id) do
       try do
         case Meeting.delete(Meeting.get!(m_id), user) do
-          {:ok, _status} -> conn |> send_resp(200,  "Deleted meeting #{m_id}")
+          {:ok, _status} ->
+            FCM.unschedule_notify(m_id)
+            conn |> send_resp(200,  "Deleted meeting #{m_id}")
           {:error, _status} -> conn |> send_resp(500,  "An unknown error occured")
         end
       rescue
@@ -110,7 +114,7 @@ defmodule ProjectMeetingsWeb.MeetingController do
           Meeting.create_invite!(Meeting.get!(m_id), User.get_by_email!(email))
         end
 
-        FCM.notify!(:meting_invite, params["emails"], Meeting.get!(m_id))
+        FCM.notify!(:meeting_invite, params["emails"], Meeting.get!(m_id))
 
         conn
         |> put_status(200)
@@ -147,13 +151,16 @@ defmodule ProjectMeetingsWeb.MeetingController do
     end
   end
 
-  # Helps with validating a changeset and inserting a new ProjectMeetings.Meeting entity
+  # Helps with validating a changeset inserting ProjectMeetings.Meeting entities
+  # into Firebase, and calling for FCM notifications to be scheduled.
   defp handle_changeset_and_insert(conn, params) do
     changeset = Meeting.changeset(%Meeting{}, params)
 
     if changeset.valid? do
       case Meeting.put(changeset.changes) do
         {:ok, meeting} ->
+          spawn(FCM, :schedule_notify, [meeting])
+
           conn
           |> put_status(200)
           |> json(meeting)

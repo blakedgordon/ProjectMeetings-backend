@@ -30,13 +30,13 @@ API Domain: http://ec2-34-226-155-228.compute-1.amazonaws.com:8080
 
 API Endpoints:
 
-- `/api/users`
+- `/api/user`
   - PUT `/`
   - GET `/email/:email`
   - GET `/uid/:u_id`
   - DELETE `/invites/:m_id`
 
-- `/api/meetings`
+- `/api/meeting`
   - POST `/`
   - GET `/:m_id`
   - PUT `/:m_id`
@@ -44,7 +44,7 @@ API Endpoints:
   - POST `/:m_id/invites`
   - DELETE `/:m_id/invites`
 
-### /api/users
+### /api/user
 #### PUT /
 Will create/update a user object in Firebase and is called after the user has signed in with Google Oauth2. Requires the Firebase uid, email, display name, and Firebase id token provided by a Firebase user object after creating an account. In addition, this method requires a Google id token, provided by a Google account object after signing in with Google. If updating a user's information, you may choose to provide some, but not all, of the required information, assuming that you provide a valid token.
 
@@ -92,7 +92,7 @@ Key | Value
 ------------ | -------------
 token | eyJhbGciOiJSUzI1NiIsImtpZCI6IjljMzgwZDMxODdj...
 
-### /api/meetings
+### /api/meeting
 #### POST /
 Will create a meeting object in Firebase. Requires a name, objective statement, start time (UNIX time), time limit (in ms), and the drive folder id. Invites can also be included. Requires a valid token.
 

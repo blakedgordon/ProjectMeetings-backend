@@ -18,4 +18,40 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-// import socket from "./socket"
+import socket from "./socket"
+
+// import {Socket, Presence} from "phoenix"
+//
+// let socket = new Socket("/socket", {params: {token: window.token}})
+//
+// socket.connect()
+//
+// let userList = document.getElementById("user-list")
+// let room = socket.channel("user:wKnVfBOGOWYUCBG9Bmon3ey8Kcn1", {})
+// let presences = {}
+//
+// listBy(id, {metas: [first, ...rest]}) => {
+//     first.name = id
+//     first.count = rest.length + 1
+//     return first
+// }
+//
+// let render = (presences) => {
+//   userList.innerHTML = Presence.list(presences, listBy)
+//     .map(user => '<li>${user.display_name} (${user.count})')
+//     .join("")
+// }
+//
+// room.on("presence_state", state => {
+//   Presence.syncState(presences, state)
+//   console.log("ayyy")
+//   console.log(presences)
+//   render(presences)
+// })
+//
+// room.on("presence_diff", diff => {
+//   Presence.syncDiff(presences, diff)
+//   render(presences)
+// })
+//
+// room.join()

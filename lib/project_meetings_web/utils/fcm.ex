@@ -1,7 +1,5 @@
 defmodule ProjectMeetings.Utils.FCM do
-  # import Crontab.CronExpression
-
-  alias ProjectMeetings.User
+  alias ProjectMeetings.{User, Meeting}
   alias ProjectMeetings.Utils.Scheduler
 
   @topics [:meeting_invite, :meeting_start, :meeting_warn]
@@ -21,7 +19,7 @@ defmodule ProjectMeetings.Utils.FCM do
 
   def notify!(topic, _emails, _meeting) when topic not in @topics do
     raise ArgumentError, message: "The first argument of notify!/3 must be one
-      of the following: #{@topics}"
+      of the following: #{List.to_string(@topics)}"
   end
 
   def notify!(_topic, emails, _meeting) when length(emails) == 0 do
@@ -51,12 +49,12 @@ defmodule ProjectMeetings.Utils.FCM do
   @doc """
   Warn users of a meeting about to start.
   """
-  def notify!(:meeting_warn, meeting) do
-    m = to_atom_map(meeting)
+  def notify!(:meeting_warn, m_id) do
+    m = to_atom_map(Meeting.get!(m_id))
 
-    registration_ids = Enum.map Map.keys(meeting.invites), fn(email) ->
+    registration_ids = Enum.map Map.keys(m.invites), fn(email) ->
       User.get_by_email!(email)["instance_id"]
-    end
+    end ++ [to_atom_map(User.get_by_u_id!(m.u_id)).email]
 
     message = %{
       type: "meeting_warn",
@@ -66,6 +64,8 @@ defmodule ProjectMeetings.Utils.FCM do
     }
 
     send_notification(message, registration_ids)
+
+    Scheduler.delete_job(String.to_atom("meeting:#{m_id}"))
   end
 
   @doc """
@@ -93,12 +93,28 @@ defmodule ProjectMeetings.Utils.FCM do
   """
   def schedule_notify(meeting) do
     m = to_atom_map(meeting)
+    job_name = String.to_atom("meeting:#{m.m_id}")
+
+    date = DateTime.from_unix!(m.time - 3000)
+
+    IO.inspect(date)
+    IO.inspect(date.day)
+
+    Scheduler.delete_job(job_name)
 
     Scheduler.new_job()
-    |> Quantum.Job.set_name("meeting:#{m.m_id}")
-    |> Quantum.Job.set_schedule(to_cron(DateTime.from_unix!(m.time)))
-    |> Quantum.Job.set_task(fn -> notify!(:meeting_warn, m) end)
+    |> Quantum.Job.set_name(job_name)
+    |> Quantum.Job.set_schedule(to_cron(DateTime.from_unix!(m.time - 300000))) # Time - 5 minutes
+    |> Quantum.Job.set_task(fn -> notify!(:meeting_warn, m.m_id) end)
     |> Scheduler.add_job()
+  end
+
+  @doc """
+  Unschedules an meeting_warn FCM notification from being sent.
+  """
+  def unschedule_notify(m_id) do
+    String.to_atom("meeting:#{m_id}")
+    |> Scheduler.delete_job
   end
 
   # Format meeting map to ensure all keys are atoms.
@@ -113,8 +129,8 @@ defmodule ProjectMeetings.Utils.FCM do
   # Convert DateTime to CronExpression
   @spec to_cron(DateTime.t) :: Crontab.CronExpression.t
   defp to_cron(dt) do
-    Crontab.CronExpression.Parser.parse!("#{dt.second} #{dt.minute}
-      #{dt.hour} #{dt.day} #{dt.month} ? #{dt.year}")
+    cron = "#{dt.second} #{dt.minute} #{dt.hour} #{dt.day} #{dt.month} #{dt.year}"
+    Crontab.CronExpression.Parser.parse!(cron)
   end
 
   # Given a message and registration ids to send the message to,
@@ -130,7 +146,8 @@ defmodule ProjectMeetings.Utils.FCM do
 
     headers = [
       {"Content-Type", "application/json"},
-      {"Authorization", "key=#{Application.get_env(:project_meetings, ProjectMeetingsWeb.Endpoint)[:firebase_server_key]}"}
+      {"Authorization", "key=#{Application.get_env(:project_meetings,
+        ProjectMeetingsWeb.Endpoint)[:firebase_server_key]}"}
     ]
 
     HTTPoison.post!(url, notification |> Poison.encode!, headers)

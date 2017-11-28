@@ -14,13 +14,13 @@ defmodule ProjectMeetings.Meeting do
   @doc false
   embedded_schema do
     field :drive_folder_id, :string
+    field :invites, {:array, :string}
     field :m_id, :string
     field :time, :integer
     field :name, :string
     field :objective, :string
     field :time_limit, :integer
     field :u_id, :string
-    field :invites, {:array, :string}
   end
 
   @doc """
@@ -39,7 +39,7 @@ defmodule ProjectMeetings.Meeting do
     |> validate_length(:name, min: 1, max: 50)
     |> validate_length(:objective, max: 100)
     |> validate_number(:time, greater_than: DateTime.to_unix(DateTime.utc_now))
-    |> validate_number(:time_limit, greater_than: 60000)
+    |> validate_number(:time_limit, greater_than_or_equal_to: 60000)
     |> validate_creator(user, :u_id)
     |> validate_drive_folder_id(user, :u_id, :drive_folder_id)
     |> validate_invites(user, :invites)
@@ -150,7 +150,6 @@ defmodule ProjectMeetings.Meeting do
 
     User.create_invite!(u_id, email, meeting)
     HTTPoison.patch!(url, Poison.encode!(user))
-    FCM
 
     with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
           %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting),
