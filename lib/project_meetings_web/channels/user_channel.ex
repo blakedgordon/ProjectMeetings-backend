@@ -22,7 +22,7 @@ defmodule ProjectMeetingsWeb.UserChannel do
 
       send self(), :after_join
 
-      {:ok, reply, socket}
+      {:ok, reply, assign(socket, :u_id, u_id)}
     else
       {:error, %{reason: "unauthorized"}}
     end

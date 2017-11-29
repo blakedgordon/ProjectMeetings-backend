@@ -96,7 +96,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
   def handle_out("presence_diff", _body, socket) do
     m_id = socket.assigns[:m_id]
 
-    if length(Presence.list("meeting:#{m_id}")[m_id].metas) == 0 do
+    if length(Map.keys(Presence.list("meeting:#{m_id}"))) == 0 do
       send self(), :after_end
     end
     {:noreply, socket}
