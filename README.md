@@ -8,7 +8,7 @@ Too often, meetings go on for too long and accomplish far too little. There are 
 
 - [API Documentation](#api-documentation)
 - [WebSockets Documentation](#websockets-documentation)
-- [Firebase Security Rules](#firebase-security-rules)
+- [Firebase Documentation](#firebase)
 
 ## Elixir / Phoenix Documentation
 
@@ -227,7 +227,9 @@ Events sent by the room include:
 `applause`: Sends new applause to the meeting.  
 `file_share`: Alerts other users of a new file shared.  
 
-## Firebase Security Rules
+## Firebase
+Endpoint: https://projectmeeting-183706.firebaseio.com/
+### Security Rules
 ```
 {
   "rules": {
