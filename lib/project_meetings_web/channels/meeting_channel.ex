@@ -44,7 +44,8 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
 
     if Map.has_key?(current_user, "meetings") and
         Map.has_key?(current_user["meetings"], m_id) do
-      FCM.notify!(:meeting_start, Meeting.get!(m_id))
+      # FCM.notify!(:meeting_start, Meeting.get!(m_id))
+      spawn(FCM, :notify!, [:meeting_start, Meeting.get!(m_id)])
       broadcast! socket, "start_meeting", %{}
     end
 

@@ -74,7 +74,7 @@ defmodule ProjectMeetings.Utils.FCM do
   def notify!(:meeting_start, meeting) do
     m = to_atom_map(meeting)
 
-    registration_ids = Enum.map Map.keys(meeting.invites), fn(email) ->
+    registration_ids = Enum.map Map.keys(m.invites), fn(email) ->
       User.get_by_email!(email)["instance_id"]
     end
 
