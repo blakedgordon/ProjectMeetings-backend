@@ -21,10 +21,21 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
         Map.has_key?(current_user["invites"], m_id)) or
         (Map.has_key?(current_user, "meetings") and
         Map.has_key?(current_user["meetings"], m_id)) do
+
+      in_progress? = Map.has_key?(Presence.list("meeting:#{m_id}"), m_id)
+
+      time_passed = if in_progress? do
+        metas= Enum.find(Presence.list("meeting:#{m_id}")[m_id].metas, fn u -> Map.has_key?(u, :started_at) end)
+        System.system_time(:millisecond) - String.to_integer(metas.started_at)
+      else
+        nil
+      end
+
       reply = %{
         msg: "Successfully connected to meeting #{m_id}. " <>
           "Welcome, #{current_user["display_name"]}!",
-        in_progress: Map.has_key?(Presence.list("meeting:#{m_id}"), m_id)
+        in_progress: in_progress?,
+        time_passed: time_passed
       }
 
       send self(), :after_join
@@ -48,6 +59,8 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
       spawn(FCM, :notify!, [:meeting_start, Meeting.get!(m_id)])
       broadcast! socket, "start_meeting", %{}
     end
+
+    send self(), :after_start
 
     {:noreply, socket}
   end
@@ -110,7 +123,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
     current_user = socket.assigns.current_user
     {:ok, _} = Presence.track(socket, current_user["u_id"], %{
       data: current_user |> Map.drop(["google_token", "firebase_token"]),
-      online_at: inspect(System.system_time(:seconds))
+      online_at: inspect(System.system_time(:millisecond))
     })
 
     push socket, "presence_state", Presence.list(socket)
@@ -124,7 +137,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
   def handle_info(:after_start, socket) do
     m_id = socket.assigns.m_id
     {:ok, _} = Presence.track(socket, m_id, %{
-      started_at: inspect(System.system_time(:seconds))
+      started_at: inspect(System.system_time(:millisecond))
     })
 
     push socket, "presence_state", Presence.list(socket)
