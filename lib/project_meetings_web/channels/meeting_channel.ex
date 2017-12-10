@@ -99,7 +99,7 @@ defmodule ProjectMeetingsWeb.MeetingChannel do
       file_id: file_id
     }
 
-    broadcast! socket, "msg", reply
+    broadcast! socket, "file_share", reply
 
     {:noreply, socket}
   end

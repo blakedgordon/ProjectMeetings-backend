@@ -57,7 +57,7 @@ defmodule ProjectMeetingsWeb.UserController do
 
         conn
         |> put_status(400)
-        |> json(%{message: "Invalid data supplied", errors: errors})
+        |> json(%{message: "Invalid data supplied", errors: errors |> Map.delete(:u_id)})
       end
     rescue
       e in RuntimeError -> conn |> send_resp(500, e.message)
