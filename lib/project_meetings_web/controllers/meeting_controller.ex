@@ -19,6 +19,7 @@ defmodule ProjectMeetingsWeb.MeetingController do
       |> Map.put("u_id", conn.assigns.user["u_id"])
       |> Map.put("m_id", UUID.generate)
 
+      spawn(FCM, :notify!, [:meeting_invite, params["invites"], meeting])
       handle_changeset_and_insert(conn, meeting)
     rescue
       e in RuntimeError ->

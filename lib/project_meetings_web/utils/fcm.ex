@@ -40,7 +40,7 @@ defmodule ProjectMeetings.Utils.FCM do
       type: "meeting_invite",
       title: "#{User.get_by_u_id!(m.u_id)["display_name"]} invited you to a meeting!",
       body: "Tap to view \"#{m.name}\"",
-      meeting: m
+      m_id: m.m_id
     }
 
     send_notification(message, registration_ids)
@@ -60,7 +60,7 @@ defmodule ProjectMeetings.Utils.FCM do
       type: "meeting_warn",
       title: "Your meeting is about to start!",
       body: "Tap to join \"#{m.name}\"",
-      meeting: m
+      m_id: m.m_id
     }
 
     send_notification(message, registration_ids)
@@ -82,7 +82,7 @@ defmodule ProjectMeetings.Utils.FCM do
       type: "meeting_start",
       title: "Your meeting is starting!",
       body: "Tap to join \"#{m.name}\"",
-      meeting: m
+      m_id: m.m_id
     }
 
     send_notification(message, registration_ids)
@@ -150,6 +150,6 @@ defmodule ProjectMeetings.Utils.FCM do
         ProjectMeetingsWeb.Endpoint)[:firebase_server_key]}"}
     ]
 
-    HTTPoison.post!(url, notification |> Poison.encode!, headers)
+    HTTPoison.post!(url, notification |> Poison.encode!, headers) |> IO.inspect
   end
 end
