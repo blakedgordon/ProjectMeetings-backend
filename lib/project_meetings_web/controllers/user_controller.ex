@@ -3,7 +3,7 @@ defmodule ProjectMeetingsWeb.UserController do
 
   alias ProjectMeetings.{Meeting, User}
 
-  @hidden_values ["google_token", "firebase_token", "instance_id"]
+  @public_values ["u_id", "email", "display_name"]
 
   @moduledoc """
   This controller assists with manipulating ProjectMeetings.User objects in
@@ -32,11 +32,11 @@ defmodule ProjectMeetingsWeb.UserController do
 
         User.changeset_update(
           %User{},
-          Map.merge(user, params) |> Map.delete("invites"),
+          Map.merge(user, params) |> Map.drop(["invites", "meetings"]),
           tokens)
       else
         {:error, _reason} -> raise ArgumentError, message: "Token has expired and must be refreshed"
-        _no_token -> User.changeset(%User{}, params |> Map.delete("invites"))
+        _no_token -> User.changeset(%User{}, params |> Map.drop(["invites", "meetings"]))
       end
 
       if changeset.valid? do
@@ -73,7 +73,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_email(params["email"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, @hidden_values))
+          json(conn, Map.take(user, @public_values))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end
@@ -89,7 +89,7 @@ defmodule ProjectMeetingsWeb.UserController do
     try do
       case User.get_by_u_id(params["u_id"]) do
         {:ok, user} ->
-          json(conn, Map.drop(user, @hidden_values))
+          json(conn, Map.take(user, @public_values))
         {:error, _status_code} ->
           conn |> send_resp(500, "An unknown error occured")
       end

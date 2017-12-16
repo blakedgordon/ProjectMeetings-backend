@@ -150,6 +150,6 @@ defmodule ProjectMeetings.Utils.FCM do
         ProjectMeetingsWeb.Endpoint)[:firebase_server_key]}"}
     ]
 
-    HTTPoison.post!(url, notification |> Poison.encode!, headers) |> IO.inspect
+    HTTPoison.post!(url, notification |> Poison.encode!, headers)
   end
 end

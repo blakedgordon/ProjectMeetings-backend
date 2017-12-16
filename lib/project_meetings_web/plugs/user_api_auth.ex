@@ -27,8 +27,6 @@ defmodule ProjectMeetingsWeb.Plugs.UserApiAuth do
         conn |> assign(:user, user)
       else
         _error ->
-          IO.inspect ProjectMeetingsWeb.Presence.list("user:wKnVfBOGOWYUCBG9Bmon3ey8Kcn1")
-
           conn
           |> put_status(401)
           |> send_resp(401, "Unauthorized AF, my dude")

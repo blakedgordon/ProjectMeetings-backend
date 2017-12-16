@@ -183,7 +183,7 @@ defmodule ProjectMeetings.User do
           %HTTPoison.Response{:status_code => 200}
             <- HTTPoison.patch!(email_url, email_body |> Poison.encode!)
     do
-      {:ok, user}
+      {:ok, get_by_u_id!(user.u_id)}
     else
       %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
       _else -> {:error, 500}
