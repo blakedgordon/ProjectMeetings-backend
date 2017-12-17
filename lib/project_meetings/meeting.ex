@@ -148,14 +148,15 @@ defmodule ProjectMeetings.Meeting do
     email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{meeting["m_id"]}/invites/#{email}.json?auth=#{@firebase_auth}"
 
-    with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
+    with  true <- u_id != meeting["u_id"],
+          %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
           %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting)
     do
       spawn(FCM, :notify!, [:meeting_invite, [email], meeting])
       {:ok, meeting}
     else
       %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
-      _else -> {:error, 500}
+      _else -> raise RuntimeError, "Email \"#{u["email"]}\" invalid."
     end
   end
 

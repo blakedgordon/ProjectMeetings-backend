@@ -23,7 +23,6 @@ defmodule ProjectMeetingsWeb.MeetingController do
       handle_changeset_and_insert(conn, meeting)
     rescue
       e in RuntimeError ->
-        IO.puts "lol wut #{e.message}"
         conn |> send_resp(500, e.message)
     end
   end
