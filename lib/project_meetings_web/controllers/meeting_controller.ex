@@ -60,11 +60,7 @@ defmodule ProjectMeetingsWeb.MeetingController do
 
       meeting = if (Map.has_key?(user, "invites") and Map.has_key?(user["invites"], m_id)) or
           (Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id))  do
-        m = Meeting.get!(m_id)
-        invites = Map.keys(m["invites"])
-
         Map.merge(Meeting.get!(m_id), params)
-        |> Map.merge(%{"invites" => invites})
         |> Map.put("u_id", user["u_id"])
         |> Map.put("m_id", m_id)
       else

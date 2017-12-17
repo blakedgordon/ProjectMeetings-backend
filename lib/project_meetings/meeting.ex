@@ -7,6 +7,8 @@ defmodule ProjectMeetings.Meeting do
   @firebase_url Application.get_env(:project_meetings, ProjectMeetingsWeb.Endpoint)[:firebase_url]
   @firebase_auth Application.get_env(:project_meetings, ProjectMeetingsWeb.Endpoint)[:firebase_auth]
 
+  @public_user_values ["u_id", "email", "display_name"]
+
   @moduledoc """
   This is the Meeting module. It helps with validating meeting parameters before modifying their values in Firebase.
   """
@@ -92,13 +94,13 @@ defmodule ProjectMeetings.Meeting do
 
     User.create_meeting!(meeting.u_id, email, meeting)
 
-    emails = Map.keys(meeting.invites)
-
     body = if Map.has_key?(meeting, :invites) do
+      emails = Map.keys(meeting.invites)
       invites = Enum.reduce emails, %{}, fn email, inv_map ->
-        user = meeting.invites[email] |> Map.delete("invites")
-        User.create_invite!(user["u_id"], user["email"], meeting)
+        user = meeting.invites[email]
+        |> Map.take(@public_user_values)
 
+        User.create_invite!(user["u_id"], user["email"], meeting)
         Map.put(inv_map, email, user)
       end
 
@@ -107,13 +109,9 @@ defmodule ProjectMeetings.Meeting do
       body
     end
 
-    with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, body |> Poison.encode!),
-          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:meeting_invite, emails, meeting)
-    do
-      {:ok, meeting}
-    else
-      %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
-      _else -> {:error, 500}
+    case HTTPoison.patch!(url, body |> Poison.encode!) do
+       %HTTPoison.Response{:status_code => 200} -> {:ok, meeting}
+       _else -> {:error, 500}
     end
   end
 
@@ -143,18 +141,17 @@ defmodule ProjectMeetings.Meeting do
   @doc """
   Invite a specific user to a specified meeting
   """
-  def create_invite!(meeting, user) do
+  def create_invite!(meeting, u) do
+    user = u |> Map.take(@public_user_values)
+
     u_id = user["u_id"]
     email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{meeting["m_id"]}/invites/#{email}.json?auth=#{@firebase_auth}"
 
-    User.create_invite!(u_id, email, meeting)
-    HTTPoison.patch!(url, Poison.encode!(user))
-
     with  %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
-          %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting),
-          %HTTPoison.Response{:status_code => 200} <- FCM.notify!(:meeting_invite, [email], meeting)
+          %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting)
     do
+      spawn(FCM, :notify!, [:meeting_invite, [email], meeting])
       {:ok, meeting}
     else
       %HTTPoison.Response{:status_code => status_code} -> {:error, status_code}
