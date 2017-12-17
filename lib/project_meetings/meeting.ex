@@ -148,7 +148,7 @@ defmodule ProjectMeetings.Meeting do
     email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{meeting["m_id"]}/invites/#{email}.json?auth=#{@firebase_auth}"
 
-    with  true <- u == nil and u_id != meeting["u_id"],
+    with  true <- u_id != nil and u_id != meeting["u_id"],
           %HTTPoison.Response{:status_code => 200} <- HTTPoison.patch!(url, Poison.encode!(user)),
           %HTTPoison.Response{:status_code => 200} <- User.create_invite!(u_id, email, meeting)
     do
@@ -168,9 +168,13 @@ defmodule ProjectMeetings.Meeting do
     u_id = user["u_id"]
     email = user["email"] |> String.replace(".", "__DOT__")
     url = "#{@firebase_url}/meetings/#{m_id}/invites/#{email}.json?auth=#{@firebase_auth}"
-    
-    User.delete_invite!(u_id, email, m_id)
-    HTTPoison.delete!(url)
+
+    if u_id != nil do
+      User.delete_invite!(u_id, email, m_id)
+      HTTPoison.delete!(url)
+    else
+      raise RuntimeError, "Email \"#{user["email"]}\" invalid."
+    end
   end
 
   # Given a changeset and the u_id, validate the u_id
