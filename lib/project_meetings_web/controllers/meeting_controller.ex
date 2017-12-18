@@ -59,7 +59,9 @@ defmodule ProjectMeetingsWeb.MeetingController do
 
       meeting = if (Map.has_key?(user, "invites") and Map.has_key?(user["invites"], m_id)) or
           (Map.has_key?(user, "meetings") and Map.has_key?(user["meetings"], m_id))  do
-        Map.merge(Meeting.get!(m_id), params)
+        Meeting.get!(m_id)
+        |> Map.merge(params)
+        |> Map.delete("invites")
         |> Map.put("u_id", user["u_id"])
         |> Map.put("m_id", m_id)
       else
@@ -151,6 +153,8 @@ defmodule ProjectMeetingsWeb.MeetingController do
   # into Firebase, and calling for FCM notifications to be scheduled.
   defp handle_changeset_and_insert(conn, params) do
     changeset = Meeting.changeset(%Meeting{}, params)
+
+    IO.inspect params
 
     if changeset.valid? do
       case Meeting.put(changeset.changes) do
