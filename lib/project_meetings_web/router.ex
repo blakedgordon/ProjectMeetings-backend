@@ -25,7 +25,7 @@ defmodule ProjectMeetingsWeb.Router do
 
   scope "/", ProjectMeetingsWeb do
     pipe_through :browser # Use the default browser stack
-    get "/", PageController, :index
+    get "/", PageController, :privacy_policy
   end
 
   scope "/socket", ProjectMeetingsWeb do
