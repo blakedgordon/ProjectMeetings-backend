@@ -6974,19 +6974,22 @@ body, form, ul, table {
 }
 
 .logo {
-  width: 355px;
-  height: 71px;
+  width: 200px;
+  height: 40px;
   display: inline-block;
   margin-bottom: 1em;
   background-image: url("/images/logo.png");
-  background-size: 355px 71px;
+  background-size: 200px 40px;
+}
+
+.nav-link {
+  margin-top: 0;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
 
 .header, .marketing {
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 0;
 }
 
 /* Customize container */
