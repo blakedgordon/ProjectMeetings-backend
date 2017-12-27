@@ -1,4 +1,4 @@
-<img width="600" src="https://i.imgur.com/30XI1Rg.png">
+## <img width="400" src="https://i.imgur.com/30XI1Rg.png">
 
 Too often, meetings go on for too long and accomplish far too little. There are usually a few people who do all the talking while everyone else is either unable to speak, distracted, or uninterested. Although there are many “meeting” apps on the marketplace (such as WebEx or GoToMeeting), none of them truly solve this problem. These apps are more concerned with facilitating meetings which couldn’t exist otherwise than actually laying a foundation for engaging and productive meetings. Because of this, we’re creating an app that reworks the common meeting by laying a foundation for structure within a meeting and giving everyone the ability to contribute in an essential way; we believe this will improve engagement and productivity across the board, helping meetings accomplish more in a fraction of the time.
 
